@@ -18,12 +18,8 @@ public class Main {
         SparkConf conf=new SparkConf().setMaster("local").setAppName("News Word Count");
         JavaSparkContext context=new JavaSparkContext(conf);
         JavaRDD<String> inputfile=context.textFile("Canada.json");
-        JavaPairRDD countdata=inputfile.flatMap((x->Arrays.asList(x.split(" ")).iterator())).mapToPair(t -> new Tuple2(t, 1)).reduceByKey((x, y) -> (int) x + (int) y);
-        Iterator iterator=countdata.toLocalIterator();
-        System.out.println(countdata.toString());
-        while (iterator.hasNext())
-        {
-            System.out.println(iterator.next().toString());
-        }
+        JavaPairRDD countdata=inputfile.flatMap((x->Arrays.asList(x.split(" ")).iterator())).mapToPair(t -> new Tuple2(t, 1)).reduceByKey((x, y) -> (int) x + (int) y).sortByKey();
+        countdata.saveAsTextFile("output.txt");
+
     }
 }
